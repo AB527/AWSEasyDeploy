@@ -3,9 +3,9 @@ package constants
 // DeployConfig stores normalized values
 type DeployConfig struct {
 	Framework          string `json:"framework"`
-	DeploymentSolution string `json:"deployment_solution"`
+	DeploymentSolution string `json:"deploymentSolution"`
 	Branch             string `json:"branch"`
-	LaunchInVPC        bool   `json:"launch_in_vpc"`
+	LaunchInVPC        bool   `json:"launchInVpc"`
 }
 
 // Map input to normalized values

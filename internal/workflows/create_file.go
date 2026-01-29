@@ -1,6 +1,7 @@
 package workflows
 
 import (
+	"easy-deploy-cli/internal/assets"
 	"easy-deploy-cli/internal/constants"
 	"encoding/json"
 	"fmt"
@@ -28,8 +29,7 @@ func RunSetupWorkflow() error {
 		return err
 	}
 
-	assetPath := filepath.Join(wd, "assets", strings.ToLower(config.DeploymentSolution)+".yaml")
-	content, err := os.ReadFile(assetPath)
+	content, err := assets.Workflows.ReadFile("workflows/" + strings.ToLower(config.DeploymentSolution) + ".yaml")
 	if err != nil {
 		return fmt.Errorf("unsupported deployment solution")
 	}

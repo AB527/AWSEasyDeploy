@@ -1,0 +1,6 @@
+{
+  "framework": "nodejs",
+  "deploymentSolution": "github",
+  "branch": "main",
+  "launchInVpc": true
+}

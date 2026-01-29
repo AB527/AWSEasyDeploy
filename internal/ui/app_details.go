@@ -133,7 +133,7 @@ func SaveConfig(config constants.DeployConfig) error {
 		return fmt.Errorf("failed to get working directory: %v", err)
 	}
 
-	filePath := filepath.Join(wd, ".easy-deploy.json")
+	filePath := filepath.Join(wd, ".easy-deploy")
 
 	file, err := os.Create(filePath)
 	if err != nil {

@@ -13,14 +13,13 @@ var initCmd = &cobra.Command{
 	Short: "Initialize your deployment project",
 	Long:  "Interactive initialization of your deployment project with framework, repo, branch, and VPC setup.",
 	Run: func(cmd *cobra.Command, args []string) {
+		// ctx := context.Background()
+		// ui.RunAppDetails(ctx)
 		err := workflows.RunSetupWorkflow()
 		if err != nil {
 			fmt.Println("❌ setup failed:", err)
 			os.Exit(1)
 		}
-		// ctx := context.Background()
-		// ui.RunAppDetails(ctx)
-
 	},
 }
 
