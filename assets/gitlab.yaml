@@ -1,0 +1,36 @@
+name: Deploy to AWS Elastic Beanstalk
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  image: ubuntu:22.04
+
+  before_script:
+    - apt-get update
+    - apt-get install -y zip curl unzip
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - ./aws/install
+    - aws --version
+
+  script:
+    - zip -r app.zip . \
+        -x ".git/*" \
+        -x "node_modules/*" \
+        -x "app.zip"
+
+    - aws s3 cp app.zip s3://$AWS_S3_BUCKET/app-$CI_COMMIT_SHA.zip
+
+    - aws elasticbeanstalk create-application-version \
+        --application-name "$AWS_EB_APP" \
+        --version-label "app-$CI_PIPELINE_IID-$CI_COMMIT_SHA" \
+        --source-bundle S3Bucket=$AWS_S3_BUCKET,S3Key=app-$CI_COMMIT_SHA.zip
+
+    - aws elasticbeanstalk update-environment \
+        --environment-name "$AWS_EB_ENV" \
+        --version-label "app-$CI_PIPELINE_IID-$CI_COMMIT_SHA"
+
+  only:
+    - main

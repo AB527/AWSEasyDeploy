@@ -1,0 +1,6 @@
+{
+  "framework": "go",
+  "deployment_solution": "gitlab",
+  "branch": "main",
+  "launch_in_vpc": true
+}
