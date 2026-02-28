@@ -65,7 +65,9 @@ func RunSetupWorkflow() error {
 		"${{ secrets.AWS_S3_BUCKET }}":         config.AwsS3Bucket,
 		"${{ secrets.AWS_EB_APP }}":            config.AwsEbApp,
 		"${{ secrets.AWS_EB_ENV }}":            config.AwsEbEnv,
+		"${{ secrets.BRANCH_NAME }}":           config.Branch,
 	}
+
 	for j := range result {
 		for old, val := range replacements {
 			if val == "" {

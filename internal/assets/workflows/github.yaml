@@ -1,3 +1,10 @@
+name: AWS Easy Deploy
+
+on:
+  push:
+    branches:
+      - ${{ secrets.BRANCH_NAME }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
