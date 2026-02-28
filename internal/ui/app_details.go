@@ -2,6 +2,8 @@ package ui
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -15,31 +17,87 @@ import (
 	"github.com/manifoldco/promptui"
 )
 
-// RunAppDetails handles the full interactive flow
 func RunAppDetails(ctx context.Context) {
-	// 1. Framework
+	wd, _ := os.Getwd()
+	configPath := filepath.Join(wd, ".easy-deploy")
+
+	if _, err := os.Stat(configPath); err == nil {
+		choicePrompt := promptui.Select{
+			Label: "Configuration exists – reinitialize from it?",
+			Items: []string{"Yes", "No"},
+		}
+		_, choice, err := choicePrompt.Run()
+		if err != nil {
+			return
+		}
+
+		if choice == "Yes" {
+			data, err := os.ReadFile(configPath)
+			if err != nil {
+				fmt.Println("❌ Unable to read config")
+				return
+			}
+			var cfg constants.DeployConfig
+			if err := json.Unmarshal(data, &cfg); err != nil {
+				fmt.Println("❌ Invalid config file")
+				return
+			}
+
+			aws.ConnectToElasticBeanstalk(ctx)
+			aws.CreateEBApplication(ctx, cfg.AwsEbApp, "")
+			_ = aws.CreateS3Bucket(ctx, cfg.AwsS3Bucket)
+
+			stack, err := resolveStack(ctx, cfg.Framework)
+			if err != nil {
+				fmt.Println("❌ Unable to resolve solution stack")
+				return
+			}
+
+			if err := aws.EnsureInstanceProfile(ctx); err != nil {
+				fmt.Println("❌ Failed to ensure instance profile")
+				return
+			}
+
+			aws.CreateEBEnvironment(ctx, cfg.AwsEbApp, cfg.AwsEbEnv, stack)
+			_ = aws.UpdateEnvironmentVariables(ctx, cfg.AwsEbEnv, map[string]string{
+				"S3_BUCKET": cfg.AwsS3Bucket,
+			})
+			return
+		}
+	}
+
+	projPrompt := promptui.Prompt{
+		Label: "Project name",
+		Validate: func(input string) error {
+			if strings.TrimSpace(input) == "" {
+				return fmt.Errorf("name cannot be empty")
+			}
+			return nil
+		},
+	}
+	project, err := projPrompt.Run()
+	if err != nil {
+		return
+	}
+
 	frameworkPrompt := promptui.Select{
 		Label: "Select your framework",
 		Items: helpers.MapKeys(constants.FrameworkMap),
 	}
 	_, framework, err := frameworkPrompt.Run()
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
-	// 2. Deployment solution
 	deployPrompt := promptui.Select{
 		Label: "Select code deployment solution",
 		Items: helpers.MapKeys(constants.DeploymentMap),
 	}
 	_, deploymentSolution, err := deployPrompt.Run()
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
-	// 3. Branch
 	branchPrompt := promptui.Prompt{
 		Label:   "Enter branch name",
 		Default: "main",
@@ -52,36 +110,28 @@ func RunAppDetails(ctx context.Context) {
 	}
 	branch, err := branchPrompt.Run()
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
-	// 4. VPC
 	vpcPrompt := promptui.Select{
 		Label: "Launch in VPC?",
 		Items: []string{"Yes", "No"},
 	}
 	_, vpcChoice, err := vpcPrompt.Run()
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
-	launchInVPC := vpcChoice == "Yes"
 
-	// Create config with normalized values
 	config := constants.DeployConfig{
 		Framework:          NormalizeFramework(framework),
 		DeploymentSolution: NormalizeDeploymentSolution(deploymentSolution),
 		Branch:             branch,
-		LaunchInVPC:        launchInVPC,
+		LaunchInVPC:        vpcChoice == "Yes",
+		AwsRegion:          "us-east-1",
+		AwsS3Bucket:        generateBucketName(project),
+		AwsEbApp:           project,
+		AwsEbEnv:           project + "-env",
 	}
-
-	// 5. Confirm details
-	fmt.Println("\nPlease confirm your details:")
-	fmt.Printf("Framework: %s\n", config.Framework)
-	fmt.Printf("Deployment Solution: %s\n", config.DeploymentSolution)
-	fmt.Printf("Branch Name: %s\n", config.Branch)
-	fmt.Printf("Launch in VPC: %t\n", config.LaunchInVPC)
 
 	confirmPrompt := promptui.Select{
 		Label: "Are these details correct?",
@@ -89,7 +139,6 @@ func RunAppDetails(ctx context.Context) {
 	}
 	_, confirm, err := confirmPrompt.Run()
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
 
@@ -98,18 +147,52 @@ func RunAppDetails(ctx context.Context) {
 		return
 	}
 
-	// 6. Save config
 	if err := SaveConfig(config); err != nil {
-		fmt.Printf("Failed to save config: %v\n", err)
+		fmt.Println("❌ Failed to save config")
 		return
 	}
 
-	// 7. AWS Deployment logic
-	aws.ConnectToElasticBeanstalk()
-	aws.CreateEBApplication(ctx, "MyApp", "My first Elastic Beanstalk application")
+	aws.ConnectToElasticBeanstalk(ctx)
+	aws.CreateEBApplication(ctx, project, "")
+
+	if err := aws.CreateS3Bucket(ctx, config.AwsS3Bucket); err != nil {
+		fmt.Printf("❌ Could not create S3 bucket\n")
+	}
+
+	stack, err := resolveStack(ctx, config.Framework)
+	if err != nil {
+		fmt.Println("❌ Unable to resolve solution stack")
+		return
+	}
+
+	if err := aws.EnsureInstanceProfile(ctx); err != nil {
+		fmt.Println("❌ Failed to ensure instance profile")
+		return
+	}
+
+	aws.CreateEBEnvironment(ctx, config.AwsEbApp, config.AwsEbEnv, stack)
+	_ = aws.UpdateEnvironmentVariables(ctx, config.AwsEbEnv, map[string]string{
+		"S3_BUCKET": config.AwsS3Bucket,
+	})
 }
 
-// NormalizeFramework converts human-readable to normalized
+func resolveStack(ctx context.Context, framework string) (string, error) {
+	keyword, ok := constants.SolutionStackKeywordMap[framework]
+	if !ok {
+		return "", fmt.Errorf("no solution stack keyword defined for framework %q", framework)
+	}
+
+	stack, err := aws.GetLatestSolutionStack(ctx, keyword)
+	if err != nil {
+		if fallback, ok := constants.SolutionStackFallbackMap[framework]; ok {
+			return fallback, nil
+		}
+		return "", fmt.Errorf("no fallback stack defined for framework %q", framework)
+	}
+
+	return stack, nil
+}
+
 func NormalizeFramework(input string) string {
 	if val, ok := constants.FrameworkMap[input]; ok {
 		return val
@@ -117,7 +200,6 @@ func NormalizeFramework(input string) string {
 	return strings.ToLower(input)
 }
 
-// NormalizeDeploymentSolution converts human-readable to normalized
 func NormalizeDeploymentSolution(input string) string {
 	if val, ok := constants.DeploymentMap[input]; ok {
 		return val
@@ -125,9 +207,7 @@ func NormalizeDeploymentSolution(input string) string {
 	return strings.ToLower(input)
 }
 
-// SaveConfig writes JSON file in ui/app-details
 func SaveConfig(config constants.DeployConfig) error {
-	// directory where CLI is executed
 	wd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("failed to get working directory: %v", err)
@@ -147,6 +227,12 @@ func SaveConfig(config constants.DeployConfig) error {
 		return fmt.Errorf("failed to write json: %v", err)
 	}
 
-	fmt.Println("✅ Config saved at:", filePath)
+	fmt.Println("✅ Config saved")
 	return nil
+}
+
+func generateBucketName(project string) string {
+	b := make([]byte, 4)
+	rand.Read(b)
+	return fmt.Sprintf("%s-%s", project, hex.EncodeToString(b))
 }

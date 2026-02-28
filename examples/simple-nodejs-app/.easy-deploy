@@ -2,5 +2,9 @@
   "framework": "nodejs",
   "deploymentSolution": "github",
   "branch": "main",
-  "launchInVpc": true
+  "launchInVpc": false,
+  "awsRegion": "us-east-1",
+  "awsS3Bucket": "test33-ca7b8418",
+  "awsEbApp": "test33",
+  "awsEbEnv": "test33-env"
 }

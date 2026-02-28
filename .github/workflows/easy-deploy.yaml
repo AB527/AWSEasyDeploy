@@ -21,17 +21,17 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp app.zip s3://test33-ca7b8418/app-${{ github.sha }}.zip
+          aws s3 cp app.zip s3://test-bucket/app-${{ github.sha }}.zip
 
       - name: Create EB application version
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name test33 \
+            --application-name test \
             --version-label app-${{ github.run_number }}-${{ github.sha }} \
-            --source-bundle S3Bucket=test33-ca7b8418,S3Key=app-${{ github.sha }}.zip
+            --source-bundle S3Bucket=test-bucket,S3Key=app-${{ github.sha }}.zip
 
       - name: Deploy to Elastic Beanstalk
         run: |
           aws elasticbeanstalk update-environment \
-            --environment-name test33-env \
+            --environment-name test-env \
             --version-label app-${{ github.run_number }}-${{ github.sha }}

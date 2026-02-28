@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"easy-deploy-cli/internal/ui"
 	"easy-deploy-cli/internal/workflows"
 	"fmt"
 	"os"
@@ -10,16 +11,19 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize your deployment project",
-	Long:  "Interactive initialization of your deployment project with framework, repo, branch, and VPC setup.",
+	Short: "Gather project details and emit CI workflow",
+	Long: `Interactively collects framework/branch information, updates the
+.easy-deploy configuration file and writes a CI workflow (GitHub or GitLab)
+into the repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// ctx := context.Background()
-		// ui.RunAppDetails(ctx)
-		err := workflows.RunSetupWorkflow()
-		if err != nil {
+		ctx := cmd.Context()
+		ui.RunAppDetails(ctx)
+
+		if err := workflows.RunSetupWorkflow(); err != nil {
 			fmt.Println("❌ setup failed:", err)
 			os.Exit(1)
 		}
+		fmt.Println("✅ workflow created successfully")
 	},
 }
 

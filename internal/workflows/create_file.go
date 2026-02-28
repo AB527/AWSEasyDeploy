@@ -11,7 +11,6 @@ import (
 )
 
 func RunSetupWorkflow() error {
-
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
@@ -29,10 +28,16 @@ func RunSetupWorkflow() error {
 		return err
 	}
 
-	content, err := assets.Workflows.ReadFile("workflows/" + strings.ToLower(config.DeploymentSolution) + ".yaml")
-	if err != nil {
-		return fmt.Errorf("unsupported deployment solution")
+	if updated, _ := json.MarshalIndent(config, "", "  "); updated != nil {
+		_ = os.WriteFile(configPath, updated, 0644)
 	}
+
+	templatePath := fmt.Sprintf("workflows/%s.yaml", config.DeploymentSolution)
+	raw, err := assets.Workflows.ReadFile(templatePath)
+	if err != nil {
+		return fmt.Errorf("unable to load workflow template %s: %w", templatePath, err)
+	}
+	content := string(raw)
 
 	inject := fmt.Sprintf(`on:
   push:
@@ -41,7 +46,7 @@ func RunSetupWorkflow() error {
 
 `, config.Branch)
 
-	lines := strings.Split(string(content), "\n")
+	lines := strings.Split(content, "\n")
 	var result []string
 
 	for i, line := range lines {
@@ -53,16 +58,33 @@ func RunSetupWorkflow() error {
 		result = append(result, line)
 	}
 
+	replacements := map[string]string{
+		"${{ secrets.AWS_ACCESS_KEY_ID }}":     config.AwsAccessKeyID,
+		"${{ secrets.AWS_SECRET_ACCESS_KEY }}": config.AwsSecretAccessKey,
+		"${{ secrets.AWS_REGION }}":            config.AwsRegion,
+		"${{ secrets.AWS_S3_BUCKET }}":         config.AwsS3Bucket,
+		"${{ secrets.AWS_EB_APP }}":            config.AwsEbApp,
+		"${{ secrets.AWS_EB_ENV }}":            config.AwsEbEnv,
+	}
+	for j := range result {
+		for old, val := range replacements {
+			if val == "" {
+				continue
+			}
+			result[j] = strings.ReplaceAll(result[j], old, val)
+		}
+	}
+
 	var outputDir, outputFile string
-	switch strings.ToLower(config.DeploymentSolution) {
+	switch config.DeploymentSolution {
 	case "github":
-		outputFile = "easy-deploy.yaml"
 		outputDir = filepath.Join(wd, ".github", "workflows")
+		outputFile = "easy-deploy.yaml"
 	case "gitlab":
-		outputFile = "gitlab-ci.yaml"
-		outputDir = filepath.Join(wd)
-	default:
 		outputDir = wd
+		outputFile = ".gitlab-ci.yml"
+	default:
+		return fmt.Errorf("unsupported deployment solution: %s", config.DeploymentSolution)
 	}
 
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
@@ -70,5 +92,10 @@ func RunSetupWorkflow() error {
 	}
 
 	outputPath := filepath.Join(outputDir, outputFile)
-	return os.WriteFile(outputPath, []byte(strings.Join(result, "\n")), 0644)
+	if err := os.WriteFile(outputPath, []byte(strings.Join(result, "\n")), 0644); err != nil {
+		return err
+	}
+
+	fmt.Printf("✅ Workflow written: %s\n", outputPath)
+	return nil
 }
