@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"easy-deploy-cli/internal/ui"
-	"easy-deploy-cli/internal/workflows"
+	"easy-deploy/internal/ui"
+	"easy-deploy/internal/workflows"
 	"fmt"
 	"os"
 

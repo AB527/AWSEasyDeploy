@@ -1,8 +1,8 @@
 package workflows
 
 import (
-	"easy-deploy-cli/internal/assets"
-	"easy-deploy-cli/internal/constants"
+	"easy-deploy/internal/assets"
+	"easy-deploy/internal/constants"
 	"encoding/json"
 	"fmt"
 	"os"

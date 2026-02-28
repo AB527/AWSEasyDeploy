@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"easy-deploy-cli/internal/aws"
-	"easy-deploy-cli/internal/constants"
-	"easy-deploy-cli/internal/helpers"
+	"easy-deploy/internal/aws"
+	"easy-deploy/internal/constants"
+	"easy-deploy/internal/helpers"
 
 	"github.com/manifoldco/promptui"
 )

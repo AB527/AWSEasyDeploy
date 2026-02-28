@@ -1,7 +1,7 @@
 package main
 
 import (
-	"easy-deploy-cli/cmd"
+	"easy-deploy/cmd"
 )
 
 func main() {
