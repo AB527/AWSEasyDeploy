@@ -1,11 +1,14 @@
-<img width="1294" height="170" alt="image" src="https://github.com/user-attachments/assets/9cbc9208-71f1-4c9b-9fe3-5c0ac4885fed" />
-
 # AWS Easy Deploy
 
 ![Go](https://img.shields.io/badge/go-1.21+-00ACD7?style=flat&logo=go&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![AWS](https://img.shields.io/badge/AWS-Elastic%20Beanstalk-FF9900?style=flat&logo=amazonaws&logoColor=white)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions%20%7C%20GitLab%20CI-2DA44E?style=flat)
+
+<br>
+<img width="1294" height="170" alt="image" src="https://github.com/user-attachments/assets/9cbc9208-71f1-4c9b-9fe3-5c0ac4885fed" />
+<br>
+<br>
 
 **AWS Elastic Beanstalk automation CLI. AWS App Runner simplicity, without the cost.**
 
