@@ -1,0 +1,12 @@
+builds:
+  - id: AWSEasyDeploy
+    main: ./cmd/AWSEasyDeploy
+    binary: AWSEasyDeploy
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - 386
