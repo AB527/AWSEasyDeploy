@@ -7,13 +7,11 @@
 ![AWS](https://img.shields.io/badge/AWS-Elastic%20Beanstalk-FF9900?style=flat&logo=amazonaws&logoColor=white)
 ![CI](https://img.shields.io/badge/CI-GitHub%20Actions%20%7C%20GitLab%20CI-2DA44E?style=flat)
 
-**Elastic Beanstalk automation CLI. App Runner simplicity, without the cost.**
+**AWS Elastic Beanstalk automation CLI. AWS App Runner simplicity, without the cost.**
 
 AWS Easy Deploy is a Go-based CLI tool that gives AWS Elastic Beanstalk the power and simplicity of AWS App Runner, automating environment initialization, CI/CD pipeline generation, S3 packaging, and environment config injection with just a few commands.
 
 Stop spending 45 to 60 minutes on manual deployment setup. AWS Easy Deploy gets your project live in **~10 minutes**, while cutting runtime costs by **40 to 60%** compared to equivalent App Runner deployments for persistent workloads.
-
----
 
 ## Why AWS Easy Deploy?
 
@@ -23,8 +21,6 @@ Stop spending 45 to 60 minutes on manual deployment setup. AWS Easy Deploy gets 
 - **Reduced setup time** from 45 to 60 mins down to ~10 mins
 - **40 to 60% cost savings** vs. equivalent AWS App Runner persistent workloads
 - **Push `.env` files directly** to Elastic Beanstalk environment config in one command
-
----
 
 ## Prerequisites
 
@@ -42,8 +38,6 @@ Configure your AWS profile if you haven't already:
 ```bash
 aws configure
 ```
-
----
 
 ## Installation
 
@@ -68,8 +62,6 @@ go install github.com/AB527/AWSEasyDeploy@latest
 ```bash
 easy-deploy --help
 ```
-
----
 
 ## Commands
 
@@ -107,8 +99,6 @@ $ easy-deploy init
 - **Reinitialize from existing config.** Sets up the local environment using the committed config. Recommended for teammates cloning an existing project.
 - **Overwrite with a fresh initialization.** Starts from scratch and replaces the existing config.
 
----
-
 ### `push-env` - Push Environment Variables to Elastic Beanstalk
 
 The `push-env` command reads a local env file and automatically pushes all key-value pairs as configuration options to your Elastic Beanstalk environment, with no manual Console clicks required.
@@ -127,8 +117,6 @@ What it does:
 - Injects all variables into the Elastic Beanstalk environment configuration
 - Triggers an environment reload to apply the changes
 - Skips blank lines and comments (lines starting with `#`)
-
----
 
 ## Quick Start
 
@@ -153,8 +141,6 @@ git push origin main
 easy-deploy push-env .env
 ```
 
----
-
 ## Contributing
 
 We welcome contributions from the community! Here's how you can get started:
@@ -165,8 +151,6 @@ We welcome contributions from the community! Here's how you can get started:
 4. Open a Pull Request and describe the changes you've made.
 
 Have an idea for a new tool or an improvement? [Open an issue](https://github.com/AB527/AWSEasyDeploy/issues) to discuss it first.
-
----
 
 ## License
 
