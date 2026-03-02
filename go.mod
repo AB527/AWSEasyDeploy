@@ -1,4 +1,4 @@
-module easy-deploy
+module github.com/AB527/easy-deploy
 
 go 1.25.6
 

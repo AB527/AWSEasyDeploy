@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"easy-deploy/internal/ui"
-	"easy-deploy/internal/workflows"
 	"fmt"
 	"os"
+
+	"github.com/AB527/easy-deploy/internal/ui"
+	"github.com/AB527/easy-deploy/internal/workflows"
 
 	"github.com/spf13/cobra"
 )

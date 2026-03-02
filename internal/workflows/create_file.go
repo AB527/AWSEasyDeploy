@@ -1,13 +1,14 @@
 package workflows
 
 import (
-	"easy-deploy/internal/assets"
-	"easy-deploy/internal/constants"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/AB527/easy-deploy/internal/assets"
+	"github.com/AB527/easy-deploy/internal/constants"
 )
 
 func RunSetupWorkflow() error {
