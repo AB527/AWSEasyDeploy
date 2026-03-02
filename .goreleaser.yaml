@@ -1,7 +1,7 @@
 builds:
   - id: AWSEasyDeploy
-    main: ./cmd/AWSEasyDeploy
-    binary: AWSEasyDeploy
+    main: .
+    binary: easy-deploy
     goos:
       - linux
       - windows
