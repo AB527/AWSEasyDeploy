@@ -20,7 +20,6 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// showBanner prints a stylized CLI header using go-figure and fatih/color
 func showBanner() {
 	c := color.New(color.FgCyan)
 	myFigure := figure.NewFigure("AWS Easy Deploy", "slant", true)

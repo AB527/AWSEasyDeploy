@@ -1,3 +1,9 @@
+on:
+  push:
+    branches:
+      - main
+
+
 name: AWS Easy Deploy
 
 on:
