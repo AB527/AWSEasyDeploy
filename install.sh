@@ -12,20 +12,22 @@ ARCH=$(uname -m)
 
 echo "Fetching latest version..."
 
-VERSION=$(curl -s https://api.github.com/repos/$REPO/releases/latest \
+TAG=$(curl -s https://api.github.com/repos/$REPO/releases/latest \
   | grep tag_name \
   | cut -d '"' -f4)
 
-FILE="${PROJECT}_${VERSION}_${OS}_${ARCH}.tar.gz"
-URL="https://github.com/$REPO/releases/download/${VERSION}/${FILE}"
+VERSION=${TAG#v}
 
-echo "Installing $PROJECT $VERSION..."
+FILE="${PROJECT}_${VERSION}_${OS}_${ARCH}.tar.gz"
+URL="https://github.com/$REPO/releases/download/${TAG}/${FILE}"
+
+echo "Installing $PROJECT v$VERSION..."
 echo "Downloading: $FILE"
 
 TMP=$(mktemp)
 
 if ! curl -fL "$URL" -o "$TMP"; then
-  echo "❌ Failed to download binary"
+  echo "Failed to download binary"
   echo "Expected: $FILE"
   exit 1
 fi
@@ -36,5 +38,5 @@ rm "$TMP"
 chmod +x $BINARY
 sudo mv $BINARY /usr/local/bin/
 
-echo "Installed successfully!"
+echo "Installed successfully"
 echo "Run: easy-deploy"
