@@ -3,6 +3,7 @@
 set -e
 
 REPO="AB527/AWSEasyDeploy"
+PROJECT="AWSEasyDeploy"
 BINARY="easy-deploy"
 
 OS=$(uname | tr '[:upper:]' '[:lower:]')
@@ -12,9 +13,9 @@ if [ "$ARCH" = "x86_64" ]; then
   ARCH="amd64"
 fi
 
-URL="https://github.com/$REPO/releases/latest/download/${BINARY}_${OS}_${ARCH}.tar.gz"
+URL="https://github.com/$REPO/releases/latest/download/${PROJECT}_${OS}_${ARCH}.tar.gz"
 
-echo "Installing $BINARY..."
+echo "Installing $PROJECT..."
 
 curl -sL $URL | tar xz
 
