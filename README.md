@@ -154,4 +154,4 @@ Have an idea for a new tool or an improvement? [Open an issue](https://github.co
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](https://github.com/AB527/AWSEasyDeploy/blob/main/LICENSE) file for details.   
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/AB527/AWSEasyDeploy/blob/main/LICENSE) file for details.
