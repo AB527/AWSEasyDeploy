@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AB527/easy-deploy/internal/aws"
-	"github.com/AB527/easy-deploy/internal/constants"
-	"github.com/AB527/easy-deploy/internal/helpers"
+	"github.com/AB527/AWSEasyDeploy/internal/aws"
+	"github.com/AB527/AWSEasyDeploy/internal/constants"
+	"github.com/AB527/AWSEasyDeploy/internal/helpers"
 
 	"github.com/manifoldco/promptui"
 )

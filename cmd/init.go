@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/AB527/easy-deploy/internal/ui"
-	"github.com/AB527/easy-deploy/internal/workflows"
+	"github.com/AB527/AWSEasyDeploy/internal/ui"
+	"github.com/AB527/AWSEasyDeploy/internal/workflows"
 
 	"github.com/spf13/cobra"
 )

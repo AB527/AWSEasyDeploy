@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/AB527/easy-deploy/internal/aws"
-	"github.com/AB527/easy-deploy/internal/constants"
+	"github.com/AB527/AWSEasyDeploy/internal/aws"
+	"github.com/AB527/AWSEasyDeploy/internal/constants"
 
 	"github.com/spf13/cobra"
 )

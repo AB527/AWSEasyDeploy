@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AB527/easy-deploy/internal/assets"
-	"github.com/AB527/easy-deploy/internal/constants"
+	"github.com/AB527/AWSEasyDeploy/internal/assets"
+	"github.com/AB527/AWSEasyDeploy/internal/constants"
 )
 
 func RunSetupWorkflow() error {

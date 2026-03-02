@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/AB527/easy-deploy/cmd"
+	"github.com/AB527/AWSEasyDeploy/cmd"
 )
 
 func main() {
