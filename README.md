@@ -81,7 +81,7 @@ You will be prompted for the following:
 | Input | Description |
 |---|---|
 | **Project Name** | Used as the Elastic Beanstalk application and environment name |
-| **Framework** | Runtime for your app (e.g. `nodejs`, `python`, `go`) |
+| **Framework** | Runtime for your app (e.g. `nodejs`, `python`, `java`) |
 | **Branch Name** | Git branch that triggers deployments (e.g. `main`) |
 | **Launch in VPC?** | Whether to deploy inside a VPC (`yes` / `no`) |
 
